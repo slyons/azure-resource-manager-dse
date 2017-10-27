@@ -20,6 +20,9 @@
     "nodeCount": {
       "type": "int"
     },
+    "copyStart": {
+      "type": "int"
+    },
     "vmSize": {
       "type": "string"
     },
@@ -159,7 +162,7 @@
     {
       "apiVersion": "2017-08-01",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "[concat(parameters('namespace'), 'ipLoop')]",
@@ -168,21 +171,21 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('namespace'), 'vm', copyIndex(), parameters('uniqueString'))]"
+          "domainNameLabel": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')), parameters('uniqueString'))]"
         }
       }
     },
     {
       "apiVersion": "2017-08-01",
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "[concat(parameters('namespace'), 'nicLoop')]",
         "count": "[parameters('nodeCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', parameters('namespace'), 'vm', copyindex())]"
+        "[concat('Microsoft.Network/publicIPAddresses/', parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -190,7 +193,7 @@
             "name": "ipconfig1",
             "properties": {
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('namespace'), 'vm', copyindex()))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart'))))]"
               },
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
@@ -204,14 +207,14 @@
     {
       "apiVersion": "2017-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('namespace'), 'vm', copyindex())]",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]",
       "location": "[parameters('location')]",
       "copy": {
         "name": "[concat(parameters('namespace'), 'vmLoop')]",
         "count": "[parameters('nodeCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespace'), 'vm', copyindex())]",
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]",
         "[concat('Microsoft.Compute/availabilitySets/', parameters('namespace'))]"
       ],
       "plan": {
@@ -227,7 +230,7 @@
           "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('namespace'), 'vm', copyIndex())]",
+          "computerName": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -247,7 +250,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namespace'), 'vm', copyindex()))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart'))))]"
             }
           ]
         }
@@ -255,7 +258,7 @@
     },
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('namespace'), 'vm', copyindex(), '/installdsenode')]",
+      "name": "[concat(parameters('namespace'), 'vm', copyindex(parameters('copyStart')), '/installdsenode')]",
       "apiVersion": "2017-03-30",
       "location": "[parameters('location')]",
       "copy": {
@@ -263,7 +266,7 @@
         "count": "[parameters('nodeCount')]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('namespace'), 'vm', copyindex())]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('namespace'), 'vm', copyindex(parameters('copyStart')))]"
       ],
       "properties": {
         "publisher": "Microsoft.OSTCExtensions",

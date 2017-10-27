@@ -108,6 +108,13 @@
       "metadata": {
         "description": "URL for nested templates and extensions"
       }
+    },
+    "nodeIndexStart":{
+      "type":"int",
+      "defaultValue":"0",
+      "metadata": {
+        "description":"What index to start node names at"
+      }
     }
   },
   "variables": {
@@ -300,6 +307,9 @@
           },
           "namespace": {
             "value": "dc0"
+          },
+          "copyStart": {
+            "value":"[parameters('nodeIndexStart')]"
           }
         }
       }
