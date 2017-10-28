@@ -9,7 +9,8 @@
       "type": "string"
     },
     "uniqueString": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": "uniqueString(resourceGroup().id, deployment().name)]"
     },
     "adminUsername": {
       "type": "string"
@@ -153,7 +154,7 @@
       "location": "[parameters('location')]",
       "properties": {
         "platformFaultDomainCount":"[variables('faultdomainCountMap')[tolower(replace(parameters('location'),' ',''))].MaximumPlatformFaultDomainCount]",
-        "platformUpdateDomainCount": 18,
+        "platformUpdateDomainCount": 18
       },
       "sku": {
         "name": "Aligned"
@@ -274,7 +275,7 @@
         "typeHandlerVersion": "1.4",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": "[parameters('osSettings').scripts]",
+          "fileUris": "[parameters('osSettings').scripts]"
         },
         "protectedSettings": {
           "commandToExecute": "[concat('bash node.sh ', parameters('nodeCount'), ' ', parameters('opsCenterFQDN'), ' ', parameters('namespace'), ' ', parameters('location'))]"

@@ -111,7 +111,7 @@
     },
     "nodeIndexStart":{
       "type":"int",
-      "defaultValue":"0",
+      "defaultValue":0,
       "metadata": {
         "description":"What index to start node names at"
       }
